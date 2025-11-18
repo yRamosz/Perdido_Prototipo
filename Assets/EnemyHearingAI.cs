@@ -11,7 +11,6 @@ public class EnemyHearingAI : MonoBehaviour
     public float patrolRadius = 5f;  // Raio de patrulha
     public float patrolChangeTime = 3f; // Tempo para mudar o destino de patrulha
 
-    // Variáveis privadas para controle
     private Transform targetSound;       // A partícula de som específica que ele está seguindo
     private Vector2 lastKnownPosition;   // A última posição onde ele "ouviu" algo
     private bool isAlert = false;        // Estado do inimigo
@@ -61,8 +60,6 @@ public class EnemyHearingAI : MonoBehaviour
         }
         else if (targetSound != null)
         {
-            // Se a partícula alvo sumiu, mas ele estava alerta
-            // Mantém a última posição conhecida para investigação
             targetSound = null;
         }
     }
@@ -71,7 +68,6 @@ public class EnemyHearingAI : MonoBehaviour
     {
         if (isAlert)
         {
-            // MODO ALERTA: Persegue a última posição do som
             if (targetSound != null)
             {
                 lastKnownPosition = targetSound.position;
@@ -83,7 +79,6 @@ public class EnemyHearingAI : MonoBehaviour
                 moveSpeed * Time.deltaTime
             );
 
-            // Se o inimigo chegou perto da última posição do som
             if (Vector2.Distance(transform.position, lastKnownPosition) < 0.1f)
             {
                 isAlert = false;
@@ -93,14 +88,13 @@ public class EnemyHearingAI : MonoBehaviour
         }
         else
         {
-            // MODO PATRULHA: Move-se para um destino aleatório dentro de um raio
+
             transform.position = Vector2.MoveTowards(
                 transform.position,
                 patrolDestination,
                 patrolSpeed * Time.deltaTime
             );
 
-            // Se chegou ao destino de patrulha ou tempo esgotou, define um novo
             if (Vector2.Distance(transform.position, patrolDestination) < 0.1f || patrolTimer <= 0f)
             {
                 SetNewPatrolDestination();
@@ -118,9 +112,6 @@ public class EnemyHearingAI : MonoBehaviour
         patrolDestination = startPosition + randomDirection * Random.Range(0f, patrolRadius);
         patrolTimer = patrolChangeTime; // Reseta o timer
     }
-
-    // Desenha um círculo de gizmo na cena (só visível no Editor)
-    // para vermos o "raio de audição" e o raio de patrulha
     private void OnDrawGizmosSelected()
     {
         // Raio de Audição

@@ -2,26 +2,26 @@ using UnityEngine;
 
 public class SoundParticle : MonoBehaviour
 {
-    public float speed = 3f;          // Velocidade da partícula
-    public float lifetime = 2f;       // Tempo de vida
-    public float fadeSpeed = 1.5f;    // Velocidade do fade-out
+    public float speed = 3f;
+    public float lifetime = 2f;
+    public float fadeSpeed = 1.5f;
 
     private Rigidbody2D rb;
     private SpriteRenderer sr;
     private Color startColor;
-    private float timer = 0f;
+    private float timer = 0.1f;
+
+    private bool hitWall = false;
 
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         sr = GetComponent<SpriteRenderer>();
 
-        if (rb != null)
-            rb.velocity = transform.up * speed;
+        rb.velocity = transform.up * speed;
 
-        // Define a cor inicial totalmente opaca
         startColor = sr.color;
-        startColor.a = 1f;  // Alpha = 1 = totalmente visível
+        startColor.a = 1f;
         sr.color = startColor;
     }
 
@@ -29,17 +29,31 @@ public class SoundParticle : MonoBehaviour
     {
         timer += Time.deltaTime;
 
-        // Faz o alpha diminuir com o tempo (fade-out)
+        // fade-out
         float alpha = Mathf.Lerp(1f, 0f, timer / lifetime);
+        sr.color = new Color(startColor.r, startColor.g, startColor.b, alpha);
 
-        sr.color = new Color(
-            startColor.r,
-            startColor.g,
-            startColor.b,
-            alpha // controla a transparência
-        );
-
+        // destruir após o fade
         if (timer >= lifetime)
             Destroy(gameObject);
+    }
+
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.CompareTag("Player") || other.CompareTag("SoundWave"))
+            return;
+
+        if (other.CompareTag("Wall"))
+        {
+            hitWall = true;
+
+            // Para totalmente
+            rb.velocity = Vector2.zero;
+            rb.isKinematic = true;   // impede futuras movimentações
+            rb.simulated = false;    // congela física
+
+            // Gruda na parede mantendo posição atual
+            transform.position = transform.position;
+        }
     }
 }

@@ -12,13 +12,14 @@ public class EnemyHearingAI : MonoBehaviour
     public float patrolChangeTime = 3f;
     public float rotationSpeed = 10f; 
 
+
     [Header("Sistema de Passos")]
     public GameObject soundWavePrefab; 
     public float waveSpawnInterval = 0.5f; 
     private float waveTimer = 0f;
 
-    // Variáveis privadas 
-    private Transform targetSound;
+
+    // Variáveis privadas
     private Vector2 lastKnownPosition;
     private bool isAlert = false;
     private Vector2 patrolDestination;
@@ -45,37 +46,25 @@ public class EnemyHearingAI : MonoBehaviour
         MoveAndRotate();
     }
 
-    void ListenForSounds()
+ void ListenForSounds()
     {
         Collider2D[] foundSounds = Physics2D.OverlapCircleAll(transform.position, hearingRange);
-        Transform closestSound = null;
-        float closestDist = Mathf.Infinity;
-
+        
         foreach (var soundCollider in foundSounds)
         {
             if (soundCollider.CompareTag("SoundParticle"))
             {
-                float dist = Vector2.Distance(transform.position, soundCollider.transform.position);
-                if (dist < closestDist)
+                SoundParticle particleScript = soundCollider.GetComponent<SoundParticle>();
+                
+                if (particleScript != null)
                 {
-                    closestDist = dist;
-                    closestSound = soundCollider.transform;
+                    lastKnownPosition = particleScript.originPoint;
+                    
+                    isAlert = true;
                 }
             }
         }
-
-        if (closestSound != null)
-        {
-            targetSound = closestSound;
-            lastKnownPosition = targetSound.position;
-            isAlert = true;
-        }
-        else if (targetSound != null)
-        {
-            targetSound = null;
-        }
     }
-
     void MoveAndRotate()
     {
         Vector2 currentTarget = startPosition;
@@ -83,14 +72,13 @@ public class EnemyHearingAI : MonoBehaviour
 
         if (isAlert)
         {
-            if (targetSound != null) lastKnownPosition = targetSound.position;
+            // --- MODO ALERTA ---
             currentTarget = lastKnownPosition;
             currentSpeed = moveSpeed;
 
             if (Vector2.Distance(rb.position, lastKnownPosition) < 0.5f)
             {
                 isAlert = false;
-                targetSound = null;
                 SetNewPatrolDestination();
             }
         }
@@ -123,7 +111,6 @@ public class EnemyHearingAI : MonoBehaviour
 
     void HandleFootsteps()
     {
-        // Verifica se o inimigo está se movendo (distância do destino > 0.5)
         bool isMoving = false;
         if (isAlert) 
             isMoving = Vector2.Distance(transform.position, lastKnownPosition) > 0.5f;
@@ -141,7 +128,7 @@ public class EnemyHearingAI : MonoBehaviour
         }
         else
         {
-            waveTimer = 0f; // reseta o timer
+            waveTimer = 0f;
         }
     }
 
@@ -150,7 +137,6 @@ public class EnemyHearingAI : MonoBehaviour
         if (soundWavePrefab != null)
         {
             GameObject emitter = Instantiate(soundWavePrefab, transform.position, Quaternion.identity);
-            
             SoundWaveEmitter emitterScript = emitter.GetComponent<SoundWaveEmitter>();
             if (emitterScript != null)
             {
@@ -161,12 +147,10 @@ public class EnemyHearingAI : MonoBehaviour
 
     void SetNewPatrolDestination()
     {
-
         float randomAngle = Random.Range(0f, 360f);
         Vector2 randomDirection = new Vector2(Mathf.Cos(randomAngle * Mathf.Deg2Rad), Mathf.Sin(randomAngle * Mathf.Deg2Rad));
-        
         patrolDestination = startPosition + randomDirection * Random.Range(1f, patrolRadius);
-        patrolTimer = patrolChangeTime; 
+        patrolTimer = patrolChangeTime;
     }
 
     private void OnDrawGizmosSelected()
@@ -176,6 +160,12 @@ public class EnemyHearingAI : MonoBehaviour
         
         Gizmos.color = Color.blue;
         Gizmos.DrawWireSphere(startPosition, patrolRadius);
-        Gizmos.DrawLine(transform.position, patrolDestination);
+        
+        if (isAlert)
+        {
+            Gizmos.color = Color.red;
+            Gizmos.DrawLine(transform.position, lastKnownPosition);
+            Gizmos.DrawWireSphere(lastKnownPosition, 0.5f);
+        }
     }
 }

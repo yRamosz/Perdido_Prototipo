@@ -16,8 +16,8 @@ GameObject:
   - component: {fileID: 2006090094803477730}
   - component: {fileID: -6480672943450720309}
   m_Layer: 0
-  m_Name: SoundParticle
-  m_TagString: SoundParticle
+  m_Name: EnemySound
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -79,7 +79,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 15
   m_Sprite: {fileID: -2413806693520163455, guid: a86470a33a6bf42c4b3595704624658b, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.8773585, g: 0.25244746, b: 0.25244746, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -138,8 +138,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 68204f245ceaa3948a4a1be663688372, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 7.5
-  lifetime: 2
+  speed: 10
+  lifetime: 1
   fadeSpeed: 1.5
 --- !u!114 &2006090094803477730
 MonoBehaviour:

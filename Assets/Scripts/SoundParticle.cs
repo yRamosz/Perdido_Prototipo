@@ -5,7 +5,8 @@ public class SoundParticle : MonoBehaviour
     public float speed = 3f;
     public float lifetime = 2f;
     public float fadeSpeed = 1.5f;
-
+    [HideInInspector] 
+    public Vector2 originPoint;
     private Rigidbody2D rb;
     private SpriteRenderer sr;
     private Color startColor;
@@ -17,6 +18,8 @@ public class SoundParticle : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         sr = GetComponent<SpriteRenderer>();
+
+        originPoint = transform.position;
 
         rb.velocity = transform.up * speed;
 
@@ -41,6 +44,9 @@ public class SoundParticle : MonoBehaviour
     void OnTriggerEnter2D(Collider2D other)
     {
         if (other.CompareTag("Player") || other.CompareTag("SoundWave"))
+            return;
+            
+        if (gameObject.CompareTag("EnemySound") && other.CompareTag("Enemy"))
             return;
 
         if (other.CompareTag("Wall"))

@@ -2,56 +2,70 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    public float moveSpeed = 5f;
-    public GameObject soundWavePrefab; // arrasta o prefab aqui no Inspector
-    public float waveSpawnInterval = 0.5f; // tempo entre ondas automáticas
-    private float waveTimer = 0f;
+    public float walkSpeed = 3f;
+    public float runSpeed = 6f;
 
+    private float currentSpeed;
+
+    public GameObject soundWavePrefab;
+
+    private PlayerSound sound;
     private Rigidbody2D rb;
     private Vector2 moveInput;
+
+    private bool isWalking;
+    private bool isRunning;
 
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        sound = GetComponent<PlayerSound>();
     }
 
     void Update()
     {
-        // Movimento do player
+        // Entrada de movimento
         moveInput.x = Input.GetAxisRaw("Horizontal");
         moveInput.y = Input.GetAxisRaw("Vertical");
 
-        // Se o player apertar espaço → cria uma onda
+        // Shift ativa corrida
+        bool shift = Input.GetKey(KeyCode.LeftShift);
+
+        // Detecta se está movendo
+        bool isMoving = moveInput.magnitude > 0.1f;
+
+        // Estados
+        isRunning = isMoving && shift;
+        isWalking = isMoving && !shift;
+
+        // Escolhe velocidade
+        currentSpeed = isRunning ? runSpeed : walkSpeed;
+
+        // Criar onda manual (tecla espaço)
         if (Input.GetKeyDown(KeyCode.Space))
         {
             CreateSoundWave();
         }
 
-        // Se o player estiver se movendo → gera ondas periódicas
-        if (moveInput.magnitude > 0)
+        // Sons (agora SÓ os sons controlam as ondas!!)
+        if (isMoving)
         {
-            waveTimer -= Time.deltaTime;
-            if (waveTimer <= 0f)
-            {
-                CreateSoundWave();
-                waveTimer = waveSpawnInterval;
-            }
-        }
-        else
-        {
-            waveTimer = 0f; // reseta o timer quando parar
+            if (isWalking)
+                sound.PlayWalk();
+
+            if (isRunning)
+                sound.PlayRun();
         }
     }
 
     void FixedUpdate()
     {
-        rb.velocity = moveInput.normalized * moveSpeed;
+        rb.velocity = moveInput.normalized * currentSpeed;
     }
 
-    void CreateSoundWave()
-{
-    GameObject emitter = Instantiate(soundWavePrefab, transform.position, Quaternion.identity);
-    emitter.GetComponent<SoundWaveEmitter>().Emit();
-}
-
+    public void CreateSoundWave()
+    {
+        GameObject emitter = Instantiate(soundWavePrefab, transform.position, Quaternion.identity);
+        emitter.GetComponent<SoundWaveEmitter>().Emit();
+    }
 }

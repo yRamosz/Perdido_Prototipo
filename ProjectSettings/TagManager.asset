@@ -9,6 +9,7 @@ TagManager:
   - SoundWave
   - player
   - SoundParticle
+  - EnemySound
   layers:
   - Default
   - TransparentFX

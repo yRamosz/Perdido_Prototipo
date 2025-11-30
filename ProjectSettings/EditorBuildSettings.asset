@@ -6,6 +6,15 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: "Assets/Scenes/LabirintoEst\xE1tico.unity"
+    path: Assets/Scenes/Jogo.unity
+    guid: 7bafed0502c87024c9cdb3cebf72c6e1
+  - enabled: 1
+    path: Assets/Scenes/Controles.unity
     guid: 8c9cfa26abfee488c85f1582747f6a02
+  - enabled: 1
+    path: Assets/Scenes/MenuInicial.unity
+    guid: aaa9bb0f885004f4793ece74564ee619
+  - enabled: 1
+    path: Assets/Scenes/Historia.unity
+    guid: 510306e3c8215c94f825e3d1e361c349
   m_configObjects: {}

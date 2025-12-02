@@ -14,7 +14,6 @@ GameObject:
   - component: {fileID: 746363253595741596}
   - component: {fileID: 2534944415984740996}
   - component: {fileID: 2006090094803477730}
-  - component: {fileID: -6480672943450720309}
   m_Layer: 0
   m_Name: SoundParticle
   m_TagString: SoundParticle
@@ -138,9 +137,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 68204f245ceaa3948a4a1be663688372, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  originPoint: {x: 0, y: 0}
   speed: 7.5
   lifetime: 2
-  fadeSpeed: 1.5
+  stopOnCollision: 1
 --- !u!114 &2006090094803477730
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -154,20 +154,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   particlePrefab: {fileID: 2020643624008662304}
-  particleCount: 20
-  spreadAngle: 360
---- !u!114 &-6480672943450720309
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2020643624008662304}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c90a8fbed226f5f4aaab38946953a9ee, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  particlePrefab: {fileID: 2020643624008662304}
-  particleCount: 20
-  spreadAngle: 360
+  baseParticleCount: 80
+  baseSpreadAngle: 360
+  baseParticleSpeed: 6
+  baseParticleLifetime: 1.2
+  particleMultiplier: 1
+  scaleMultiplier: 1
+  angleJitter: 4
+  maxParticlesClamp: 500

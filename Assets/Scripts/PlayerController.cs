@@ -4,10 +4,9 @@ public class PlayerController : MonoBehaviour
 {
     public float walkSpeed = 3f;
     public float runSpeed = 6f;
+    public float stealthSpeed = 1.5f;
 
     private float currentSpeed;
-
-    public GameObject soundWavePrefab;
 
     private PlayerSound sound;
     private Rigidbody2D rb;
@@ -15,6 +14,7 @@ public class PlayerController : MonoBehaviour
 
     private bool isWalking;
     private bool isRunning;
+    public bool isStealth;
 
     void Start()
     {
@@ -24,36 +24,31 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-        // Entrada de movimento
         moveInput.x = Input.GetAxisRaw("Horizontal");
         moveInput.y = Input.GetAxisRaw("Vertical");
 
-        // Shift ativa corrida
         bool shift = Input.GetKey(KeyCode.LeftShift);
+        bool ctrl = Input.GetKey(KeyCode.LeftControl);
 
-        // Detecta se está movendo
         bool isMoving = moveInput.magnitude > 0.1f;
 
-        // Estados
-        isRunning = isMoving && shift;
-        isWalking = isMoving && !shift;
+        isStealth = ctrl;
+        isRunning = isMoving && shift && !ctrl;
+        isWalking = isMoving && !shift && !ctrl;
 
-        // Escolhe velocidade
-        currentSpeed = isRunning ? runSpeed : walkSpeed;
+        if (isStealth)
+            currentSpeed = stealthSpeed;
+        else
+            currentSpeed = isRunning ? runSpeed : walkSpeed;
 
-        // Criar onda manual (tecla espaço)
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            CreateSoundWave();
-        }
-
-        // Sons (agora SÓ os sons controlam as ondas!!)
+        // Tocar passos
         if (isMoving)
         {
-            if (isWalking)
+            if (isStealth)
+                sound.PlayStealth();
+            else if (isWalking)
                 sound.PlayWalk();
-
-            if (isRunning)
+            else if (isRunning)
                 sound.PlayRun();
         }
     }
@@ -61,11 +56,5 @@ public class PlayerController : MonoBehaviour
     void FixedUpdate()
     {
         rb.velocity = moveInput.normalized * currentSpeed;
-    }
-
-    public void CreateSoundWave()
-    {
-        GameObject emitter = Instantiate(soundWavePrefab, transform.position, Quaternion.identity);
-        emitter.GetComponent<SoundWaveEmitter>().Emit();
     }
 }

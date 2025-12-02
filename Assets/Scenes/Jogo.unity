@@ -486,7 +486,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   walkSpeed: 1.5
   runSpeed: 3
-  soundWavePrefab: {fileID: 2020643624008662304, guid: 153cfdde62cf3e448a195238ec232c7e, type: 3}
+  stealthSpeed: 1
+  isStealth: 0
 --- !u!58 &679733522
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -782,11 +783,14 @@ MonoBehaviour:
   - {fileID: 8300000, guid: ba367a8478258b64894f90be051eab33, type: 3}
   - {fileID: 8300000, guid: 4ea9bcc780dda304eb098db4512248ac, type: 3}
   runInterval: 0.25
+  stealthSteps: []
+  stealthInterval: 0.6
   minPitch: 0.95
   maxPitch: 1.05
   minVolume: 0.3
   maxVolume: 0.45
-  soundWaveEmitterPrefab: {fileID: 2020643624008662304, guid: 153cfdde62cf3e448a195238ec232c7e, type: 3}
+  normalWaveEmitterPrefab: {fileID: 3426718262286003553, guid: 0f9a677a36c88074da6c211d2a8a8ae8, type: 3}
+  stealthWaveEmitterPrefab: {fileID: 3426718262286003553, guid: e5682a3dbd4fbc644abda0ea58868134, type: 3}
 --- !u!1 &1028425491
 GameObject:
   m_ObjectHideFlags: 0
@@ -960,8 +964,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   particlePrefab: {fileID: 2020643624008662304, guid: 153cfdde62cf3e448a195238ec232c7e, type: 3}
-  particleCount: 20
-  spreadAngle: 360
+  baseParticleCount: 80
+  baseSpreadAngle: 360
+  baseParticleSpeed: 6
+  baseParticleLifetime: 1.2
+  particleMultiplier: 1
+  scaleMultiplier: 1
+  angleJitter: 4
+  maxParticlesClamp: 500
 --- !u!4 &1112229000
 Transform:
   m_ObjectHideFlags: 0

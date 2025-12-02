@@ -2,9 +2,9 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    public float walkSpeed = 3f;
+    public float walkSpeed = 2f;
     public float runSpeed = 6f;
-    public float stealthSpeed = 1.5f;
+    public float stealthSpeed = 0.1f;
 
     private float currentSpeed;
 
@@ -41,7 +41,6 @@ public class PlayerController : MonoBehaviour
         else
             currentSpeed = isRunning ? runSpeed : walkSpeed;
 
-        // Tocar passos
         if (isMoving)
         {
             if (isStealth)
@@ -51,6 +50,11 @@ public class PlayerController : MonoBehaviour
             else if (isRunning)
                 sound.PlayRun();
         }
+
+        if (Input.GetKeyDown(KeyCode.Space))
+{
+    sound.ForceEmit(isStealth); 
+}
     }
 
     void FixedUpdate()

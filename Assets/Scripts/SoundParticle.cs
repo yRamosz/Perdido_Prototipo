@@ -19,18 +19,14 @@ public class SoundParticle : MonoBehaviour
 
     void Start()
     {
-        // move para frente (transform.up é a direção de saída do prefab)
         if (rb != null)
-        {
             rb.velocity = transform.up * speed;
-        }
     }
 
     void Update()
     {
         timer += Time.deltaTime;
 
-        // fade-out no final do lifetime
         if (sr != null)
         {
             float a = Mathf.Clamp01(1f - (timer / lifetime));
@@ -45,7 +41,6 @@ public class SoundParticle : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        // para quando colide com parede (se quiser)
         if (stopOnCollision && other.CompareTag("Wall"))
         {
             if (rb != null)

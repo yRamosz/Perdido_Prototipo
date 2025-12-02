@@ -14,8 +14,8 @@ public class PlayerSound : MonoBehaviour
     public float runInterval = 0.25f;
 
     [Header("Footstep Variations - Stealth")]
-    public AudioClip[] stealthSteps;       // passos abafados (pode usar um arquivo curto)
-    public float stealthInterval = 0.6f;   // passos mais espaçados
+    public AudioClip[] stealthSteps;
+    public float stealthInterval = 0.6f;
 
     [Header("Pitch & Volume Randomization")]
     public float minPitch = 0.95f;
@@ -24,8 +24,8 @@ public class PlayerSound : MonoBehaviour
     public float maxVolume = 0.45f;
 
     [Header("Emitters (prefabs)")]
-    public GameObject normalWaveEmitterPrefab;   // prefab para onda normal
-    public GameObject stealthWaveEmitterPrefab;  // prefab para onda stealth (menos partículas)
+    public GameObject normalWaveEmitterPrefab;
+    public GameObject stealthWaveEmitterPrefab;
 
     private float stepTimer = 0f;
 
@@ -34,7 +34,6 @@ public class PlayerSound : MonoBehaviour
         if (stepTimer > 0f) stepTimer -= Time.deltaTime;
     }
 
-    // chamadas externas
     public void PlayWalk()
     {
         TryPlayStep(walkSteps, walkInterval, false);
@@ -50,36 +49,25 @@ public class PlayerSound : MonoBehaviour
         TryPlayStep(stealthSteps, stealthInterval, true);
     }
 
-    // Força emissão imediata (ex.: tecla espaço)
     public void ForceEmit(bool stealth)
     {
-        // não toca áudio, só emite a onda visual (chamada quando apertar espaço)
         EmitWave(stealth);
     }
 
     private void TryPlayStep(AudioClip[] clips, float interval, bool stealth)
     {
-        if (clips == null || clips.Length == 0) 
-        {
-            // mesmo sem áudio, queremos emitir a onda (se desejado)
-            EmitWave(stealth);
-            stepTimer = interval;
-            return;
-        }
+        if (stepTimer > 0f) return;
 
-        if (stepTimer <= 0f)
+        if (clips != null && clips.Length > 0)
         {
             AudioClip clip = clips[Random.Range(0, clips.Length)];
             source.pitch = Random.Range(minPitch, maxPitch);
             float volume = Random.Range(minVolume, maxVolume);
-
             source.PlayOneShot(clip, volume);
-
-            // emitir onda sincronizada com o passo
-            EmitWave(stealth);
-
-            stepTimer = interval;
         }
+
+        EmitWave(stealth);
+        stepTimer = interval;
     }
 
     private void EmitWave(bool stealth)
@@ -87,39 +75,31 @@ public class PlayerSound : MonoBehaviour
         GameObject prefab = stealth ? stealthWaveEmitterPrefab : normalWaveEmitterPrefab;
         if (prefab == null)
         {
-            Debug.LogWarning("[PlayerSound] Emissor não atribuído para " + (stealth ? "stealth" : "normal"));
+            Debug.LogWarning("[PlayerSound] Emissor não atribuído.");
             return;
         }
 
         GameObject emitter = Instantiate(prefab, transform.position, Quaternion.identity);
 
-        // aqui você pode ajustar multiplicadores dinamicamente (ex.: stealth menor)
         SoundWaveEmitter swe = emitter.GetComponent<SoundWaveEmitter>();
         if (swe != null)
         {
             if (stealth)
             {
-                // ajusta para ondas menores e menos partículas
-                swe.particleMultiplier = 0.3f;
-                swe.scaleMultiplier = 0.5f;
-                swe.baseParticleLifetime = 0.9f;
-                swe.baseParticleSpeed = 4f;
+                swe.particleMultiplier = 0.4f;
+                swe.scaleMultiplier = 0.7f;
+                swe.baseParticleLifetime = 1f;
+                swe.baseParticleSpeed = 2f;
             }
             else
             {
-                // valores de default já no prefab; você pode ajustar dinamicamente se quiser
                 swe.particleMultiplier = 1f;
                 swe.scaleMultiplier = 1f;
                 swe.baseParticleLifetime = 1.2f;
                 swe.baseParticleSpeed = 6f;
             }
 
-            // finalmente emite
             swe.Emit();
-        }
-        else
-        {
-            Debug.LogWarning("[PlayerSound] prefab instanciado não contém SoundWaveEmitter.");
         }
     }
 }

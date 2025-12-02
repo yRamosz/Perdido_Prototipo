@@ -45,11 +45,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   particlePrefab: {fileID: 2020643624008662304, guid: 153cfdde62cf3e448a195238ec232c7e, type: 3}
-  baseParticleCount: 30
+  baseParticleCount: 80
   baseSpreadAngle: 360
-  baseParticleSpeed: 0.005
-  baseParticleLifetime: 0.3
-  particleMultiplier: 0.01
-  scaleMultiplier: 0.1
-  angleJitter: 4
-  maxParticlesClamp: 12
+  baseParticleSpeed: 3
+  baseParticleLifetime: 0.6
+  particleMultiplier: 0.2
+  scaleMultiplier: 0.2
+  angleJitter: 2
+  maxParticlesClamp: 500

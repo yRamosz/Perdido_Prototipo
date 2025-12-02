@@ -61,4 +61,16 @@ public class PlayerController : MonoBehaviour
     {
         rb.velocity = moveInput.normalized * currentSpeed;
     }
+
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Enemy"))
+        {
+            Debug.Log("Morreu!");
+            
+            FindObjectOfType<GameManager>().TriggerGameOver();
+            
+        }
+    }
+
 }

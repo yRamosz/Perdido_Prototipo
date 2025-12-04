@@ -29,29 +29,22 @@ public class PlayerController : MonoBehaviour
     {
         moveInput.x = Input.GetAxisRaw("Horizontal");
         moveInput.y = Input.GetAxisRaw("Vertical");
-
-<<<<<<< HEAD
-<<<<<<< HEAD
         // Shift ativa corrida
         bool shiftLeft = Input.GetKey(KeyCode.LeftShift);
         bool shiftRight = Input.GetKey(KeyCode.RightShift);
-=======
+
         bool shift = Input.GetKey(KeyCode.LeftShift);
         bool ctrl = Input.GetKey(KeyCode.LeftControl);
->>>>>>> 52c0e16d26197452bd6d015815fab1ebb73286ae
 
         bool isMoving = moveInput.magnitude > 0.1f;
-
-<<<<<<< HEAD
         // Estados
         isRunning = isMoving && shiftLeft || shiftRight;
         isWalking = isMoving && !shiftLeft || !shiftRight;
-=======
+
         isStealth = ctrl;
         isRunning = isMoving && shift && !ctrl;
         isWalking = isMoving && !shift && !ctrl;
->>>>>>> 52c0e16d26197452bd6d015815fab1ebb73286ae
-=======
+
         bool shift = Input.GetKey(KeyCode.LeftShift);
         bool ctrl = Input.GetKey(KeyCode.LeftControl);
 
@@ -60,7 +53,6 @@ public class PlayerController : MonoBehaviour
         isStealth = ctrl;
         isRunning = isMoving && shift && !ctrl;
         isWalking = isMoving && !shift && !ctrl;
->>>>>>> 87066dc5091395da459979f6ac0ea51bc7b944cf
 
         if (isStealth)
             currentSpeed = stealthSpeed;

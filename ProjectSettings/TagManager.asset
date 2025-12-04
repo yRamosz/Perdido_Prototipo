@@ -8,10 +8,13 @@ TagManager:
   - Wall
   - SoundParticle
   - Enemy
-<<<<<<< HEAD
-=======
   - SoundWave
->>>>>>> 87066dc5091395da459979f6ac0ea51bc7b944cf
+  tags:
+  - player
+  - Wall
+  - SoundParticle
+  - Enemy
+  - SoundWave
   layers:
   - Default
   - TransparentFX

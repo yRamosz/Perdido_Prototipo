@@ -138,6 +138,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   originPoint: {x: 0, y: 0}
+  originPoint: {x: 0, y: 0}
   speed: 7.5
   lifetime: 2
 <<<<<<< HEAD

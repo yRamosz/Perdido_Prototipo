@@ -3,7 +3,9 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     public float walkSpeed = 2f;
+    public float walkSpeed = 2f;
     public float runSpeed = 6f;
+    public float stealthSpeed = 0.1f;
     public float stealthSpeed = 0.1f;
 
     private float currentSpeed;
@@ -14,6 +16,7 @@ public class PlayerController : MonoBehaviour
 
     private bool isWalking;
     private bool isRunning;
+    public bool isStealth;
     public bool isStealth;
 
     void Start()
@@ -63,16 +66,29 @@ public class PlayerController : MonoBehaviour
             currentSpeed = stealthSpeed;
         else
             currentSpeed = isRunning ? runSpeed : walkSpeed;
+        if (isStealth)
+            currentSpeed = stealthSpeed;
+        else
+            currentSpeed = isRunning ? runSpeed : walkSpeed;
 
         if (isMoving)
         {
             if (isStealth)
                 sound.PlayStealth();
             else if (isWalking)
+            if (isStealth)
+                sound.PlayStealth();
+            else if (isWalking)
                 sound.PlayWalk();
+            else if (isRunning)
             else if (isRunning)
                 sound.PlayRun();
         }
+
+        if (Input.GetKeyDown(KeyCode.Space))
+{
+    sound.ForceEmit(isStealth); 
+}
 
         if (Input.GetKeyDown(KeyCode.Space))
 {
@@ -86,6 +102,7 @@ public class PlayerController : MonoBehaviour
     }
 
     void OnCollisionEnter2D(Collision2D collision)
+    void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.CompareTag("Enemy"))
         {
@@ -94,6 +111,14 @@ public class PlayerController : MonoBehaviour
             FindObjectOfType<GameManager>().TriggerGameOver();
             
         }
+        if (collision.gameObject.CompareTag("Enemy"))
+        {
+            Debug.Log("Morreu!");
+            
+            FindObjectOfType<GameManager>().TriggerGameOver();
+            
+        }
     }
+
 
 }

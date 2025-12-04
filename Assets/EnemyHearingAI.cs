@@ -4,35 +4,31 @@ public class EnemyHearingAI : MonoBehaviour
 {
     [Header("Audição")]
     public float hearingRange = 10f;
-    
+
     [Header("Movimento da IA")]
-    public float moveSpeed = 5f;     
-    public float patrolSpeed = 2f;   
+    public float moveSpeed = 5f;
+    public float patrolSpeed = 2f;
     public float patrolRadius = 5f;
     public float patrolChangeTime = 3f;
-    public float rotationSpeed = 10f; 
-
+    public float rotationSpeed = 10f;
 
     [Header("Sistema de Passos")]
-    public GameObject soundWavePrefab; 
-    public float waveSpawnInterval = 0.5f; 
+    public GameObject soundWavePrefab;
+    public float waveSpawnInterval = 0.5f;
     private float waveTimer = 0f;
 
-
-    // Variáveis privadas
     private Vector2 lastKnownPosition;
     private bool isAlert = false;
+
     private Vector2 patrolDestination;
     private float patrolTimer;
-    private Vector2 startPosition;
     private Rigidbody2D rb;
 
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
-        startPosition = transform.position;
         patrolTimer = patrolChangeTime;
-        SetNewPatrolDestination(); 
+        SetNewPatrolDestination();
     }
 
     void Update()
@@ -46,37 +42,37 @@ public class EnemyHearingAI : MonoBehaviour
         MoveAndRotate();
     }
 
- void ListenForSounds()
+    void ListenForSounds()
     {
-        Collider2D[] foundSounds = Physics2D.OverlapCircleAll(transform.position, hearingRange);
-        
-        foreach (var soundCollider in foundSounds)
+        Collider2D[] found = Physics2D.OverlapCircleAll(transform.position, hearingRange);
+
+        foreach (var col in found)
         {
-            if (soundCollider.CompareTag("SoundParticle"))
+            if (col.CompareTag("SoundParticle"))
             {
-                SoundParticle particleScript = soundCollider.GetComponent<SoundParticle>();
-                
-                if (particleScript != null)
+                SoundParticle p = col.GetComponent<SoundParticle>();
+                if (p != null)
                 {
-                    lastKnownPosition = particleScript.originPoint;
-                    
+                    lastKnownPosition = p.originPoint;
                     isAlert = true;
                 }
             }
         }
     }
+
     void MoveAndRotate()
     {
-        Vector2 currentTarget = startPosition;
-        float currentSpeed = patrolSpeed;
+        Vector2 target;
+        float speed;
 
         if (isAlert)
         {
-            // --- MODO ALERTA ---
-            currentTarget = lastKnownPosition;
-            currentSpeed = moveSpeed;
+            // ALERTA → vai até a última posição do som
+            target = lastKnownPosition;
+            speed = moveSpeed;
 
-            if (Vector2.Distance(rb.position, lastKnownPosition) < 0.5f)
+            // Se chegou no ponto investigado, volta a patrulhar
+            if (Vector2.Distance(transform.position, lastKnownPosition) < 0.5f)
             {
                 isAlert = false;
                 SetNewPatrolDestination();
@@ -84,40 +80,47 @@ public class EnemyHearingAI : MonoBehaviour
         }
         else
         {
-            // --- MODO PATRULHA ---
-            currentTarget = patrolDestination;
-            currentSpeed = patrolSpeed;
+            // PATRULHA NORMAL
+            target = patrolDestination;
+            speed = patrolSpeed;
 
             patrolTimer -= Time.fixedDeltaTime;
-            if (Vector2.Distance(rb.position, patrolDestination) < 0.5f || patrolTimer <= 0f)
+
+            bool reached = Vector2.Distance(transform.position, patrolDestination) < 0.5f;
+            bool timeout = patrolTimer <= 0f;
+
+            if (reached || timeout)
             {
                 SetNewPatrolDestination();
             }
         }
 
-        // Rotação
-        Vector2 direction = currentTarget - rb.position;
+        // ROTACIONA SUAVEMENTE
+        Vector2 direction = target - (Vector2)transform.position;
         if (direction.magnitude > 0.1f)
         {
-            direction.Normalize();
-            float targetAngle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg - 90f;
-            transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.Euler(0, 0, targetAngle), rotationSpeed * Time.fixedDeltaTime);
+            float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg - 90f;
+            transform.rotation = Quaternion.Lerp(
+                transform.rotation,
+                Quaternion.Euler(0, 0, angle),
+                rotationSpeed * Time.fixedDeltaTime
+            );
         }
 
-        // Movimento
-        Vector2 newPos = Vector2.MoveTowards(rb.position, currentTarget, currentSpeed * Time.fixedDeltaTime);
+        // MOVIMENTO
+        Vector2 newPos = Vector2.MoveTowards(
+            rb.position,
+            target,
+            speed * Time.fixedDeltaTime
+        );
         rb.MovePosition(newPos);
     }
 
     void HandleFootsteps()
     {
-        bool isMoving = false;
-        if (isAlert) 
-            isMoving = Vector2.Distance(transform.position, lastKnownPosition) > 0.5f;
-        else 
-            isMoving = Vector2.Distance(transform.position, patrolDestination) > 0.5f;
+        bool moving = rb.velocity.magnitude > 0.1f;
 
-        if (isMoving)
+        if (moving)
         {
             waveTimer -= Time.deltaTime;
             if (waveTimer <= 0f)
@@ -137,30 +140,30 @@ public class EnemyHearingAI : MonoBehaviour
         if (soundWavePrefab != null)
         {
             GameObject emitter = Instantiate(soundWavePrefab, transform.position, Quaternion.identity);
-            SoundWaveEmitter emitterScript = emitter.GetComponent<SoundWaveEmitter>();
-            if (emitterScript != null)
-            {
-                emitterScript.Emit();
-            }
+            SoundWaveEmitter swe = emitter.GetComponent<SoundWaveEmitter>();
+            if (swe != null) swe.Emit();
         }
     }
 
     void SetNewPatrolDestination()
     {
-        float randomAngle = Random.Range(0f, 360f);
-        Vector2 randomDirection = new Vector2(Mathf.Cos(randomAngle * Mathf.Deg2Rad), Mathf.Sin(randomAngle * Mathf.Deg2Rad));
-        patrolDestination = startPosition + randomDirection * Random.Range(1f, patrolRadius);
         patrolTimer = patrolChangeTime;
+
+        // Gera novo alvo ao redor da posição ATUAL (e não a inicial!)
+        float angle = Random.Range(0f, 360f);
+        Vector2 dir = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle));
+
+        patrolDestination = (Vector2)transform.position + dir * Random.Range(1f, patrolRadius);
     }
 
     private void OnDrawGizmosSelected()
     {
-        Gizmos.color = Color.yellow; 
+        Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(transform.position, hearingRange);
-        
+
         Gizmos.color = Color.blue;
-        Gizmos.DrawWireSphere(startPosition, patrolRadius);
-        
+        Gizmos.DrawWireSphere(transform.position, patrolRadius);
+
         if (isAlert)
         {
             Gizmos.color = Color.red;

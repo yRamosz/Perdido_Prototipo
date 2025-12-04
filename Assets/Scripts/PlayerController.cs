@@ -2,12 +2,11 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    public float walkSpeed = 3f;
+    public float walkSpeed = 2f;
     public float runSpeed = 6f;
+    public float stealthSpeed = 0.1f;
 
     private float currentSpeed;
-
-    public GameObject soundWavePrefab;
 
     private PlayerSound sound;
     private Rigidbody2D rb;
@@ -15,6 +14,7 @@ public class PlayerController : MonoBehaviour
 
     private bool isWalking;
     private bool isRunning;
+    public bool isStealth;
 
     void Start()
     {
@@ -24,38 +24,60 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-        // Entrada de movimento
         moveInput.x = Input.GetAxisRaw("Horizontal");
         moveInput.y = Input.GetAxisRaw("Vertical");
 
+<<<<<<< HEAD
+<<<<<<< HEAD
         // Shift ativa corrida
+        bool shiftLeft = Input.GetKey(KeyCode.LeftShift);
+        bool shiftRight = Input.GetKey(KeyCode.RightShift);
+=======
         bool shift = Input.GetKey(KeyCode.LeftShift);
+        bool ctrl = Input.GetKey(KeyCode.LeftControl);
+>>>>>>> 52c0e16d26197452bd6d015815fab1ebb73286ae
 
-        // Detecta se está movendo
         bool isMoving = moveInput.magnitude > 0.1f;
 
+<<<<<<< HEAD
         // Estados
-        isRunning = isMoving && shift;
-        isWalking = isMoving && !shift;
+        isRunning = isMoving && shiftLeft || shiftRight;
+        isWalking = isMoving && !shiftLeft || !shiftRight;
+=======
+        isStealth = ctrl;
+        isRunning = isMoving && shift && !ctrl;
+        isWalking = isMoving && !shift && !ctrl;
+>>>>>>> 52c0e16d26197452bd6d015815fab1ebb73286ae
+=======
+        bool shift = Input.GetKey(KeyCode.LeftShift);
+        bool ctrl = Input.GetKey(KeyCode.LeftControl);
 
-        // Escolhe velocidade
-        currentSpeed = isRunning ? runSpeed : walkSpeed;
+        bool isMoving = moveInput.magnitude > 0.1f;
 
-        // Criar onda manual (tecla espaço)
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            CreateSoundWave();
-        }
+        isStealth = ctrl;
+        isRunning = isMoving && shift && !ctrl;
+        isWalking = isMoving && !shift && !ctrl;
+>>>>>>> 87066dc5091395da459979f6ac0ea51bc7b944cf
 
-        // Sons (agora SÓ os sons controlam as ondas!!)
+        if (isStealth)
+            currentSpeed = stealthSpeed;
+        else
+            currentSpeed = isRunning ? runSpeed : walkSpeed;
+
         if (isMoving)
         {
-            if (isWalking)
+            if (isStealth)
+                sound.PlayStealth();
+            else if (isWalking)
                 sound.PlayWalk();
-
-            if (isRunning)
+            else if (isRunning)
                 sound.PlayRun();
         }
+
+        if (Input.GetKeyDown(KeyCode.Space))
+{
+    sound.ForceEmit(isStealth); 
+}
     }
 
     void FixedUpdate()
@@ -63,9 +85,15 @@ public class PlayerController : MonoBehaviour
         rb.velocity = moveInput.normalized * currentSpeed;
     }
 
-    public void CreateSoundWave()
+    void OnCollisionEnter2D(Collision2D collision)
     {
-        GameObject emitter = Instantiate(soundWavePrefab, transform.position, Quaternion.identity);
-        emitter.GetComponent<SoundWaveEmitter>().Emit();
+        if (collision.gameObject.CompareTag("Enemy"))
+        {
+            Debug.Log("Morreu!");
+            
+            FindObjectOfType<GameManager>().TriggerGameOver();
+            
+        }
     }
+
 }

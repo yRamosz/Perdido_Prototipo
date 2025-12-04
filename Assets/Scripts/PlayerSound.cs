@@ -13,14 +13,19 @@ public class PlayerSound : MonoBehaviour
     public AudioClip[] runSteps;
     public float runInterval = 0.25f;
 
+    [Header("Footstep Variations - Stealth")]
+    public AudioClip[] stealthSteps;
+    public float stealthInterval = 0.6f;
+
     [Header("Pitch & Volume Randomization")]
     public float minPitch = 0.95f;
     public float maxPitch = 1.05f;
     public float minVolume = 0.30f;
     public float maxVolume = 0.45f;
 
-    [Header("Sound Wave Emitter")]
-    public GameObject soundWaveEmitterPrefab; // arraste o prefab SoundWaveEmitter aqui
+    [Header("Emitters (prefabs)")]
+    public GameObject normalWaveEmitterPrefab;
+    public GameObject stealthWaveEmitterPrefab;
 
     private float stepTimer = 0f;
 
@@ -31,54 +36,70 @@ public class PlayerSound : MonoBehaviour
 
     public void PlayWalk()
     {
-        TryPlayStep(walkSteps, walkInterval);
+        TryPlayStep(walkSteps, walkInterval, false);
     }
 
     public void PlayRun()
     {
-        TryPlayStep(runSteps, runInterval);
+        TryPlayStep(runSteps, runInterval, false);
     }
 
-    private void TryPlayStep(AudioClip[] clips, float interval)
+    public void PlayStealth()
     {
-        if (clips == null || clips.Length == 0) return;
+        TryPlayStep(stealthSteps, stealthInterval, true);
+    }
 
-        if (stepTimer <= 0f)
+    public void ForceEmit(bool stealth)
+    {
+        EmitWave(stealth);
+    }
+
+    private void TryPlayStep(AudioClip[] clips, float interval, bool stealth)
+    {
+        if (stepTimer > 0f) return;
+
+        if (clips != null && clips.Length > 0)
         {
-            // escolhe clip + pitch + volume
             AudioClip clip = clips[Random.Range(0, clips.Length)];
             source.pitch = Random.Range(minPitch, maxPitch);
             float volume = Random.Range(minVolume, maxVolume);
-
-            // toca o som
             source.PlayOneShot(clip, volume);
-
-            // **EMITE A ONDA SINCRONIZADA**
-            EmitWaveFromPlayer();
-
-            // reseta timer
-            stepTimer = interval;
         }
+
+        EmitWave(stealth);
+        stepTimer = interval;
     }
 
-    private void EmitWaveFromPlayer()
+    private void EmitWave(bool stealth)
     {
-        if (soundWaveEmitterPrefab == null)
+        GameObject prefab = stealth ? stealthWaveEmitterPrefab : normalWaveEmitterPrefab;
+        if (prefab == null)
         {
-            Debug.LogWarning("[PlayerSound] soundWaveEmitterPrefab não atribuído!");
+            Debug.LogWarning("[PlayerSound] Emissor não atribuído.");
             return;
         }
 
-        // instancia o emissor exatamente na posição do player e chama Emit()
-        GameObject emitter = Instantiate(soundWaveEmitterPrefab, transform.position, Quaternion.identity);
+        GameObject emitter = Instantiate(prefab, transform.position, Quaternion.identity);
+
         SoundWaveEmitter swe = emitter.GetComponent<SoundWaveEmitter>();
         if (swe != null)
         {
+            if (stealth)
+            {
+                swe.particleMultiplier = 0.4f;
+                swe.scaleMultiplier = 0.7f;
+                swe.baseParticleLifetime = 1f;
+                swe.baseParticleSpeed = 2f;
+            }
+            else
+            {
+                swe.particleMultiplier = 1f;
+                swe.scaleMultiplier = 1f;
+                swe.baseParticleLifetime = 1.2f;
+                swe.baseParticleSpeed = 6f;
+            }
+
             swe.Emit();
-        }
-        else
-        {
-            Debug.LogWarning("[PlayerSound] prefab instanciado não contém SoundWaveEmitter.");
         }
     }
 }

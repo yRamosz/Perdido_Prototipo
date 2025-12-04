@@ -1,21 +1,28 @@
 using UnityEngine;
-using UnityEngine.SceneManagement; 
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
-    public GameObject gameOverUI; 
+    [Header("Telas")]
+    public GameObject gameOverUI;
+    public GameObject winUI; 
 
     public void TriggerGameOver()
     {
         gameOverUI.SetActive(true);
+        Time.timeScale = 0f;
+    }
 
-        Time.timeScale = 0f; 
+    public void TriggerWin()
+    {
+        winUI.SetActive(true);
+        
+        Time.timeScale = 0f;
     }
 
     public void RestartGame()
     {
         Time.timeScale = 1f;
-
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 }

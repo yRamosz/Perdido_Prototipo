@@ -438,6 +438,7 @@ GameObject:
   - component: {fileID: 679733521}
   - component: {fileID: 679733526}
   - component: {fileID: 679733527}
+  - component: {fileID: 679733528}
   m_Layer: 0
   m_Name: Player
   m_TagString: player
@@ -760,6 +761,27 @@ MonoBehaviour:
   minVolume: 0.3
   maxVolume: 0.45
   soundWaveEmitterPrefab: {fileID: 2020643624008662304, guid: 153cfdde62cf3e448a195238ec232c7e, type: 3}
+--- !u!95 &679733528
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 679733520}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: c083e6d07b766d446be745754b2d4298, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &747603548
 GameObject:
   m_ObjectHideFlags: 0

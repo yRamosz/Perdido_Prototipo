@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 939695194262712501}
   m_Layer: 0
   m_Name: Enemy
-  m_TagString: Enemy
+  m_TagString: SoundParticle
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -42,7 +42,7 @@ SpriteRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 939695194262712502}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 0
   m_ReceiveShadows: 0
   m_DynamicOccludee: 1
@@ -142,5 +142,5 @@ MonoBehaviour:
   patrolRadius: 5
   patrolChangeTime: 3
   rotationSpeed: 10
-  soundWavePrefab: {fileID: 2020643624008662304, guid: 023a724919716394ea1a5c97f2172a0e, type: 3}
+  soundWaveEmitterPrefab: {fileID: 0}
   waveSpawnInterval: 1

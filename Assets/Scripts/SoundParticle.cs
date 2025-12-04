@@ -3,6 +3,7 @@ using UnityEngine;
 public class SoundParticle : MonoBehaviour
 {
     [HideInInspector] public Vector2 originPoint;
+
     public float speed = 6f;
     public float lifetime = 1.2f;
     public bool stopOnCollision = true;
@@ -19,6 +20,8 @@ public class SoundParticle : MonoBehaviour
 
     void Start()
     {
+        originPoint = transform.position;
+
         if (rb != null)
             rb.velocity = transform.up * speed;
     }
@@ -27,6 +30,7 @@ public class SoundParticle : MonoBehaviour
     {
         timer += Time.deltaTime;
 
+        // Fading da partícula
         if (sr != null)
         {
             float a = Mathf.Clamp01(1f - (timer / lifetime));
@@ -41,6 +45,18 @@ public class SoundParticle : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D other)
     {
+        // Não parar em player ou outras ondas
+        if (other.CompareTag("Player"))
+            return;
+
+        if (other.CompareTag("SoundParticle"))
+            return;
+
+        // Evita parar no próprio inimigo (caso inimigo gere ondas também)
+        if (other.CompareTag("Enemy") && gameObject.CompareTag("EnemySound"))
+            return;
+
+        // Parar na parede
         if (stopOnCollision && other.CompareTag("Wall"))
         {
             if (rb != null)

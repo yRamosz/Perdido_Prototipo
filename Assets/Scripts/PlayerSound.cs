@@ -93,10 +93,10 @@ public class PlayerSound : MonoBehaviour
             }
             else
             {
-                swe.particleMultiplier = 1f;
-                swe.scaleMultiplier = 1f;
-                swe.baseParticleLifetime = 1.2f;
-                swe.baseParticleSpeed = 6f;
+                swe.particleMultiplier = 1.2f;
+                swe.scaleMultiplier = 0.7f;
+                swe.baseParticleSpeed = 4f;
+                swe.baseParticleLifetime = 0.8f;
             }
 
             swe.Emit();

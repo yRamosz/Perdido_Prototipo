@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 1854486753862508051}
   m_Layer: 0
   m_Name: normalWaveEmitterPrefab
-  m_TagString: Untagged
+  m_TagString: SoundParticle
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -47,8 +47,8 @@ MonoBehaviour:
   particlePrefab: {fileID: 2020643624008662304, guid: 153cfdde62cf3e448a195238ec232c7e, type: 3}
   baseParticleCount: 80
   baseSpreadAngle: 360
-  baseParticleSpeed: 6
-  baseParticleLifetime: 1.2
+  baseParticleSpeed: 4
+  baseParticleLifetime: 0.8
   particleMultiplier: 1
   scaleMultiplier: 1
   angleJitter: 4

@@ -142,5 +142,7 @@ MonoBehaviour:
   patrolRadius: 5
   patrolChangeTime: 3
   rotationSpeed: 10
-  soundWaveEmitterPrefab: {fileID: 0}
+  soundWavePrefab: {fileID: 939695194262712502}
   waveSpawnInterval: 1
+  player: {fileID: 0}
+  attackDistance: 0.4
